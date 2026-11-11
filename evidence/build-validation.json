@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-11",
+  "unit_tests_passed": 7,
+  "madeira": {
+    "input_ipa_sha256": "7cdab35d6029b9a7701775ac794ac2674cac501ec6503465775e7a35ae046154",
+    "generated_executable_sha256": "4360a867fe5126d9ebfc1917e38ae1d339e1ee484a9fe2460faf897f481fa84e",
+    "zip_entries_checked": 1407,
+    "changed_entries": [
+      "Payload/Madeira.app/Madeira",
+      "Payload/Madeira.app/Info.plist"
+    ],
+    "other_entries_unchanged": true,
+    "requires_resigning": true
+  },
+  "fame_game2": {
+    "generated_executable_sha256": "2d9eea559e0d6d8d836c50ad6eedd48b15eef8971151d1480e8f46e6db96880c",
+    "matches_tested_phone_executable": true
+  },
+  "fonts32": {
+    "registrations_added_in_local_fixture": 8
+  },
+  "scope": "Offline reproduction of tested artifacts; not a new device gameplay test"
+}
