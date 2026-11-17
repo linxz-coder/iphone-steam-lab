@@ -11,3 +11,13 @@ GitHub Actions 在 `codex/deck-ui-build` 分支构建，使用上游同款 `xcod
 预览通过不代表完整 app 已构建或已安装；以 Actions 结果和手机回读为准。首次构建需要编译 LLVM、FEX、Wine、DXMT 等依赖，可能需要数小时。
 
 补丁修改的 Madeira 源码沿用 GPL-3.0-or-later 和 Madeira Converter Exception，详见本目录许可证。仓库其他独立脚本的许可不变。
+
+## 这次手机上的结果
+
+2026-11-17，0.2.0 / build 7 已用原应用身份安装到 iPhone 17 Pro / iOS 26.5.1。[完整构建记录](https://github.com/linxz-coder/iphone-steam-lab/actions/runs/44019905283)。
+
+横向封面切换和原游戏详情入口能用。实机还发现旧 Desktop 自动焦点会把新首页滚走，现已修正，连续两次重新打开均停在顶部。安装前后核对了六款游戏目录、107 个存档及配置文件和 7 个启动文件摘要，数据均保留。JIT 通过原 StikDebug 脚本启用，Memory+ 正常。
+
+这轮没有重新跑游戏、测帧率或测温度。Madeira 内的 Enable JIT 仍可能误报 StikDebug 未安装，继续使用已配置的 StikDebug 流程；首页补丁没有修改认证和 JIT 实现。睡狗在启动后的自动云同步中下载了两个更新文件，旧文件已备份，九个文件与云端一致，没有上传存档。
+
+定制 IPA 的 SHA-256：`0c7b160577cf78dd73cadcdb9bffc877eed144cc5f672f8c25dc9ab79d5e0d09`。后续续签保持原账号和应用标识，使用这份定制包或更高版本的同源构建，避免官方旧包覆盖定制首页。
