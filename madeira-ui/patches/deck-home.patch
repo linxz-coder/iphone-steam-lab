@@ -1,5 +1,5 @@
 diff --git a/app/Madeira.xcodeproj/project.pbxproj b/app/Madeira.xcodeproj/project.pbxproj
-index 5d6c310..b0e76bb 100644
+index 5d6c310..69917a3 100644
 --- a/app/Madeira.xcodeproj/project.pbxproj
 +++ b/app/Madeira.xcodeproj/project.pbxproj
 @@ -7,6 +7,8 @@
@@ -43,7 +43,7 @@ index 5d6c310..b0e76bb 100644
  				CODE_SIGN_IDENTITY = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
++				CURRENT_PROJECT_VERSION = 7;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				GENERATE_INFOPLIST_FILE = NO;
  				HEADER_SEARCH_PATHS = (
@@ -52,7 +52,7 @@ index 5d6c310..b0e76bb 100644
  				CODE_SIGN_ENTITLEMENTS = Madeira/Madeira.entitlements;
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
++				CURRENT_PROJECT_VERSION = 7;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				GENERATE_INFOPLIST_FILE = NO;
  				HEADER_SEARCH_PATHS = (
@@ -61,7 +61,7 @@ index 5d6c310..b0e76bb 100644
  				CODE_SIGN_IDENTITY = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
++				CURRENT_PROJECT_VERSION = 7;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
  				GENERATE_INFOPLIST_FILE = NO;
@@ -70,12 +70,12 @@ index 5d6c310..b0e76bb 100644
  				APPLICATION_EXTENSION_API_ONLY = YES;
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
++				CURRENT_PROJECT_VERSION = 7;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
  				GENERATE_INFOPLIST_FILE = NO;
 diff --git a/app/Madeira/Info.plist b/app/Madeira/Info.plist
-index 15c078a..f5cb966 100644
+index 15c078a..fec34a8 100644
 --- a/app/Madeira/Info.plist
 +++ b/app/Madeira/Info.plist
 @@ -57,6 +57,8 @@
@@ -83,7 +83,7 @@ index 15c078a..f5cb966 100644
  	<key>CFBundleVersion</key>
  	<string>$(CURRENT_PROJECT_VERSION)</string>
 +	<key>MadeiraBuild</key>
-+	<string>0.2.0-deck-ui-va-floor-20261117</string>
++	<string>0.2.0-deck-ui-va-floor-20261117-r2</string>
  	<key>GCSupportsGameMode</key>
  	<true/>
  	<key>LSSupportsGameMode</key>
@@ -279,10 +279,10 @@ index 06cd0d1..f91fc68 100644
                  (main_image_info.DllCharacteristics & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE))
 diff --git a/app/Madeira/DeckLibraryShelf.swift b/app/Madeira/DeckLibraryShelf.swift
 new file mode 100644
-index 0000000..6e5fc24
+index 0000000..e99ff22
 --- /dev/null
 +++ b/app/Madeira/DeckLibraryShelf.swift
-@@ -0,0 +1,154 @@
+@@ -0,0 +1,159 @@
 +// SPDX-License-Identifier: GPL-3.0-or-later
 +// Madeira Converter Exception: see LICENSE-EXCEPTION.md
 +
@@ -349,10 +349,15 @@ index 0000000..6e5fc24
 +                        }.padding(6)
 +                    }
 +                    .frame(height: coverHeight + 12)
-+                    .onAppear { reader.scrollTo(active.id, anchor: .leading) }
++                    .onAppear {
++                        // The first card is already visible. During cold launch,
++                        // scrollTo can also move the enclosing vertical library
++                        // before the native search bar has finished laying out.
++                        if active.id != games.first?.id { reader.scrollTo(active.id, anchor: .leading) }
++                    }
 +                    .onChange(of: width) { _, _ in
 +                        // Keep the selected cover visible after a rotation or split-view resize.
-+                        reader.scrollTo(active.id, anchor: .leading)
++                        if active.id != games.first?.id { reader.scrollTo(active.id, anchor: .leading) }
 +                    }
 +                    .onChange(of: selection) { _, id in
 +                        guard let id else { return }
@@ -360,7 +365,7 @@ index 0000000..6e5fc24
 +                    }
 +                    .onChange(of: games.map(\.id)) { _, ids in
 +                        if let selection, !ids.contains(selection) { self.selection = ids.first }
-+                        if let id = self.selection ?? ids.first { reader.scrollTo(id, anchor: .leading) }
++                        if let id = self.selection, id != ids.first { reader.scrollTo(id, anchor: .leading) }
 +                    }
 +                }
 +
