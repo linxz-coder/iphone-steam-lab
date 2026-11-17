@@ -1,0 +1,569 @@
+diff --git a/app/Madeira.xcodeproj/project.pbxproj b/app/Madeira.xcodeproj/project.pbxproj
+index 5d6c310..b0e76bb 100644
+--- a/app/Madeira.xcodeproj/project.pbxproj
++++ b/app/Madeira.xcodeproj/project.pbxproj
+@@ -7,6 +7,8 @@
+ 	objects = {
+ 
+ /* Begin PBXBuildFile section */
++		DEC000000000000000000002 /* LibraryDeckArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC100000000000000000002 /* LibraryDeckArtwork.swift */; };
++		DEC000000000000000000001 /* DeckLibraryShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC100000000000000000001 /* DeckLibraryShelf.swift */; };
+ 		A1000E07 /* EpicCloudSaves.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000E07 /* EpicCloudSaves.swift */; };
+ 		A1000E06 /* EpicCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000E06 /* EpicCloud.swift */; };
+ 		A1000520 /* MadeiraDock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000520 /* MadeiraDock.swift */; };
+@@ -284,6 +286,8 @@
+ /* End PBXCopyFilesBuildPhase section */
+ 
+ /* Begin PBXFileReference section */
++		DEC100000000000000000002 /* LibraryDeckArtwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryDeckArtwork.swift; sourceTree = "<group>"; };
++		DEC100000000000000000001 /* DeckLibraryShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckLibraryShelf.swift; sourceTree = "<group>"; };
+ 		A2000E07 /* EpicCloudSaves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftEpic/EpicCloudSaves.swift"; sourceTree = "<group>"; };
+ 		A2000E06 /* EpicCloud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EpicCloud.swift"; sourceTree = "<group>"; };
+ 		A2000520 /* MadeiraDock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MadeiraDock.swift"; sourceTree = "<group>"; };
+@@ -733,6 +737,8 @@
+ 				A2000911 /* GameRecommendations.swift */,
+ 				A2000912 /* GameRecommendationsApply.swift */,
+ 				A2000400 /* Library.swift */,
++				DEC100000000000000000002 /* LibraryDeckArtwork.swift */,
++				DEC100000000000000000001 /* DeckLibraryShelf.swift */,
+ 				A2000977 /* LibraryCoverSpot.swift */,
+ 				A2000976 /* LibraryGridZoomStart.swift */,
+ 				A2000975 /* LibraryGridZoomIdle.swift */,
+@@ -1195,6 +1201,8 @@
+ 				A1000911 /* GameRecommendations.swift in Sources */,
+ 				A1000912 /* GameRecommendationsApply.swift in Sources */,
+ 				A1000400 /* Library.swift in Sources */,
++				DEC000000000000000000002 /* LibraryDeckArtwork.swift in Sources */,
++				DEC000000000000000000001 /* DeckLibraryShelf.swift in Sources */,
+ 				A1000977 /* LibraryCoverSpot.swift in Sources */,
+ 				A1000976 /* LibraryGridZoomStart.swift in Sources */,
+ 				A1000975 /* LibraryGridZoomIdle.swift in Sources */,
+@@ -1346,7 +1354,7 @@
+ 				CODE_SIGN_ENTITLEMENTS = Madeira/Madeira.entitlements;
+ 				CODE_SIGN_IDENTITY = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = V8NU3FX3TL;
+ 				GENERATE_INFOPLIST_FILE = NO;
+ 				HEADER_SEARCH_PATHS = (
+@@ -1398,7 +1406,7 @@
+ 				"OTHER_LDFLAGS[sdk=iphoneos*]" = ("$(inherited)", "$(MADEIRA_VULKAN_LDFLAGS)");
+ 				CODE_SIGN_ENTITLEMENTS = Madeira/Madeira.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = V8NU3FX3TL;
+ 				GENERATE_INFOPLIST_FILE = NO;
+ 				HEADER_SEARCH_PATHS = (
+@@ -1448,7 +1456,7 @@
+ 				APPLICATION_EXTENSION_API_ONLY = YES;
+ 				CODE_SIGN_IDENTITY = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = V8NU3FX3TL;
+ 				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
+ 				GENERATE_INFOPLIST_FILE = NO;
+@@ -1479,7 +1487,7 @@
+ 			buildSettings = {
+ 				APPLICATION_EXTENSION_API_ONLY = YES;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 5;
++				CURRENT_PROJECT_VERSION = 6;
+ 				DEVELOPMENT_TEAM = V8NU3FX3TL;
+ 				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
+ 				GENERATE_INFOPLIST_FILE = NO;
+diff --git a/app/Madeira/Info.plist b/app/Madeira/Info.plist
+index 15c078a..f5cb966 100644
+--- a/app/Madeira/Info.plist
++++ b/app/Madeira/Info.plist
+@@ -57,6 +57,8 @@
+ 	</array>
+ 	<key>CFBundleVersion</key>
+ 	<string>$(CURRENT_PROJECT_VERSION)</string>
++	<key>MadeiraBuild</key>
++	<string>0.2.0-deck-ui-va-floor-20261117</string>
+ 	<key>GCSupportsGameMode</key>
+ 	<true/>
+ 	<key>LSSupportsGameMode</key>
+diff --git a/app/Madeira/Library.swift b/app/Madeira/Library.swift
+index 35cb4f1..8d348ff 100644
+--- a/app/Madeira/Library.swift
++++ b/app/Madeira/Library.swift
+@@ -3331,6 +3331,8 @@ struct LibraryView: View {
+     @State private var settingsSheet: SettingsSheet?
+     @State private var settingsRefresh = 0
+     @AppStorage("madeiraLibraryLayout") private var layout = "cards"
++    @AppStorage("madeiraDeckHome") private var deckHome = true
++    @State private var deckSelection: String?
+     /// The new grid (LibraryGridPage.swift): off by default, and its stored size (a position on the levels).
+     @AppStorage(LibraryGridArm.key) private var zoomableGrid = false
+     @AppStorage(GridZoomHapticPlayer.key) private var zoomHaptics = true
+@@ -3382,14 +3384,16 @@ struct LibraryView: View {
+         // names stay for VoiceOver.
+         TabView(selection: Binding(get: { tab }, set: { switchTab(to: $0) })) {
+             // The card layouts: the zoomable page or the original one (LibraryGridArm).
+-            Group { if LibraryGridArm.zoomable(setting: zoomableGrid, layout: layout) { zoomableLibrary } else { library } }
+-                .background(Color(uiColor: .systemGroupedBackground).ignoresSafeArea())
++            Group { if !deckHome && LibraryGridArm.zoomable(setting: zoomableGrid, layout: layout) { zoomableLibrary } else { library } }
++                .background((deckHome ? DeckLibraryPalette.background : Color(uiColor: .systemGroupedBackground)).ignoresSafeArea())
+                 .tabItem { Image(systemName: "square.grid.2x2.fill").accessibilityLabel("Library") }
+                 .tag(0)
+             settingsTab
+                 .tabItem { Image(systemName: "gearshape.fill").accessibilityLabel("Settings") }
+                 .tag(1)
+         }
++        .preferredColorScheme(tab == 0 && deckHome ? .dark : nil)
++        .tint(tab == 0 && deckHome ? DeckLibraryPalette.accent : .accentColor)
+         // The system search field (Liquid Glass on iOS 26) in the title's place, left
+         // of the library's buttons, on both tabs; each tab keeps its own text.
+         .background(LibraryNavSearch(text: tab == 0 ? $search : $settingsSearch,
+@@ -3441,6 +3445,8 @@ struct LibraryView: View {
+     @ToolbarContentBuilder private var libraryToolbar: some ToolbarContent {
+         ToolbarItem(placement: .topBarTrailing) {
+             Menu {
++                Toggle("Steam Deck 风格首页", isOn: $deckHome)
++                Divider()
+                 if zoomableGrid {
+                     // The new grid is sized by pinching, so the layout menu has no card sizes: one "Cards" entry
+                     // stands for the grid (either stored size), and the pinched size is kept.
+@@ -3619,8 +3625,37 @@ struct LibraryView: View {
+         GeometryReader { viewport in
+         ScrollViewReader { reader in
+         ScrollView {
++            let deck = deckHome ? deckItems : []
+             VStack(alignment: .leading, spacing: 24) {
+-                if !storeTabs.isEmpty { LibraryStoreTabBar(tabs: storeTabs, selection: $storeTab) }
++                if !deckHome && !storeTabs.isEmpty { LibraryStoreTabBar(tabs: storeTabs, selection: $storeTab) }
++                if deckHome {
++                    DeckLibraryShelf(games: deck.map(\.game),
++                                     title: sort == "played" ? "最近游玩" : "已安装游戏",
++                                     width: max(1, min(viewport.size.width, 1100) - 64),
++                                     viewportHeight: viewport.size.height - 32,
++                                     selection: $deckSelection,
++                                     open: openDeckGame,
++                                     browse: {
++                                         withAnimation(UIAccessibility.isReduceMotionEnabled ? nil : .easeInOut(duration: 0.2)) {
++                                             reader.scrollTo("deck-browse", anchor: .top)
++                                         }
++                                     }) { game, wide in
++                        let item = deck.first { $0.game.id == game.id }
++                        LibraryDeckArtwork(source: LibraryDeckArtwork.source(entry: item?.entry, steamID: item?.steamID, wide: wide))
++                    }
++                    .padding(.horizontal, 16)
++                    .padding(.vertical, viewport.size.width > viewport.size.height ? 8 : 16)
++                    .background(LinearGradient(colors: [DeckLibraryPalette.surface, DeckLibraryPalette.background],
++                                               startPoint: .topLeading, endPoint: .bottomTrailing),
++                                in: RoundedRectangle(cornerRadius: 16))
++                    .id("deck-shelf")
++                    HStack {
++                        Text("我的游戏库").font(.title2.bold())
++                        Spacer()
++                        Text("安装 · 下载 · 存档").font(.caption).foregroundStyle(.secondary)
++                    }.id("deck-browse")
++                    if !storeTabs.isEmpty { LibraryStoreTabBar(tabs: storeTabs, selection: $storeTab) }
++                }
+                 desktopButton
+                 // The library's sections, as in the fork: Steam (installed and downloading
+                 // Steam games, then Not installed), then Other games, the games you added.
+@@ -3696,12 +3731,28 @@ struct LibraryView: View {
+                 }
+             }
+             // Ambient light behind the grid cards, in the content's own space so it scrolls with them.
+-            .backgroundPreferenceValue(AmbientGlowKey.self) { AmbientGlowLayer(items: $0) }
++            .backgroundPreferenceValue(AmbientGlowKey.self) { items in
++                if !deckHome { AmbientGlowLayer(items: items) }
++            }
+             .padding(16).frame(maxWidth: 1100).frame(maxWidth: .infinity)
+         }
+         .refreshable { await SteamGamesSection.refresh() }
+         .onReceive(controller.commands) { command in
+             guard tab == 0, selected == nil, !browser, !onboarding.presented else { return }
++            if deckHome, !deckItems.isEmpty {
++                let games = deckItems.map(\.game)
++                let index = games.firstIndex { $0.id == deckSelection } ?? 0
++                if command == "add" { browser = true }
++                else if command == "accept" { openDeckGame(games[index].id) }
++                else if ["left", "right", "up", "down"].contains(command) {
++                    let delta = command == "left" || command == "up" ? -1 : 1
++                    withAnimation(UIAccessibility.isReduceMotionEnabled ? nil : .easeOut(duration: 0.2)) {
++                        deckSelection = games[(index + delta + games.count) % games.count].id
++                        reader.scrollTo("deck-shelf", anchor: .top)
++                    }
++                }
++                return
++            }
+             let items = focusOrder
+             let ids = [LibraryEntry.desktopID] + items.map(\.id)
+             let index = ids.firstIndex(where: { $0 == focused }) ?? 0
+@@ -3727,6 +3778,60 @@ struct LibraryView: View {
+         }
+         }
+     }
++    /// Snapshot only: no save, filesystem scan or launch while rendering cards.
++    /// Steam IDs stay stable even before the first Game details page creates an entry.
++    private struct DeckItem {
++        var game: DeckLibraryGame
++        var entry: LibraryEntry?
++        var steamID: Int?
++        var position: Int
++    }
++    private var deckItems: [DeckItem] {
++        let recorded = Dictionary(model.entries.enumerated().compactMap { index, entry in
++            entry.steamAppID.map { ($0, (index, entry)) }
++        }, uniquingKeysWith: { first, _ in first })
++        var result: [DeckItem] = []
++        if MadeiraDock.enabled && (group != "platform" || currentTab.shows(.steam)) {
++            for installed in steamGames.games where installed.installed {
++                let saved = recorded[installed.id]
++                let title = saved?.1.title ?? installed.name
++                guard search.trimmingCharacters(in: .whitespaces).isEmpty || title.localizedCaseInsensitiveContains(search) else { continue }
++                var status = "已安装 · Steam"
++                if let transfer = steamLibrary.downloads[installed.id]?.transfer {
++                    status = SteamGamesRules.status(installed: installed, transfer: transfer, updateAvailable: false).badge ?? status
++                } else if steamLibrary.cloudUndecided.contains(installed.id) {
++                    status = "Steam Cloud 存档待确认"
++                }
++                result.append(DeckItem(game: .init(id: "steam:\(installed.id)", title: title,
++                                                   subtitle: status, lastPlayed: saved?.1.lastPlayed),
++                                       entry: saved?.1, steamID: installed.id, position: saved?.0 ?? -1))
++            }
++        }
++        if group != "platform" || currentTab.shows(.other) {
++            for entry in entries {
++                result.append(DeckItem(game: .init(id: "entry:\(entry.id)", title: entry.title,
++                                                   subtitle: "本地游戏", lastPlayed: entry.lastPlayed),
++                                       entry: entry, position: model.entries.firstIndex { $0.id == entry.id } ?? -1))
++            }
++        }
++        var seen = Set<String>()
++        return result.filter { seen.insert($0.game.id).inserted }.sorted {
++            if sort == "played", $0.game.lastPlayed != $1.game.lastPlayed {
++                return ($0.game.lastPlayed ?? .distantPast) > ($1.game.lastPlayed ?? .distantPast)
++            }
++            if sort == "added", $0.position != $1.position { return $0.position > $1.position }
++            if sort == "size", $0.entry?.folderBytes != $1.entry?.folderBytes {
++                return ($0.entry?.folderBytes ?? -1) > ($1.entry?.folderBytes ?? -1)
++            }
++            return $0.game.title.localizedStandardCompare($1.game.title) == .orderedAscending
++        }
++    }
++    private func openDeckGame(_ id: String) {
++        guard let item = deckItems.first(where: { $0.game.id == id }) else { return }
++        if let steamID = item.steamID, let installed = steamGames.games.first(where: { $0.id == steamID }) {
++            selected = model.steamEntry(installed, title: item.game.title)
++        } else if let entry = item.entry { selected = entry }
++    }
+     /// The Desktop button at the top of the page (both grids).
+     private var desktopButton: some View {
+         HStack {
+diff --git a/build/ntdll-unix/virtual_ios.c b/build/ntdll-unix/virtual_ios.c
+index 06cd0d1..f91fc68 100644
+--- a/build/ntdll-unix/virtual_ios.c
++++ b/build/ntdll-unix/virtual_ios.c
+@@ -30735,7 +30735,14 @@ void virtual_set_large_address_space(void)
+     {
+         if (!wow)
+         {
++#ifndef WINE_IOS
+             address_space_start = (void *)0x10000;
++#endif
++            /* Local VA-floor compatibility fix: preserve the iOS-initialized
++             * lower bound. Resetting it to 64 KB makes native Steam/WebView2
++             * processes rescan the unmappable __PAGEZERO range. Equivalent
++             * to the single-store NOP already used on this device; the WoW
++             * branch and non-iOS behaviour remain unchanged. */
+ #ifndef __APPLE__  /* don't free the zerofill section on macOS */
+             if ((main_image_info.DllCharacteristics & IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA) &&
+                 (main_image_info.DllCharacteristics & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE))
+diff --git a/app/Madeira/DeckLibraryShelf.swift b/app/Madeira/DeckLibraryShelf.swift
+new file mode 100644
+index 0000000..6e5fc24
+--- /dev/null
++++ b/app/Madeira/DeckLibraryShelf.swift
+@@ -0,0 +1,154 @@
++// SPDX-License-Identifier: GPL-3.0-or-later
++// Madeira Converter Exception: see LICENSE-EXCEPTION.md
++
++import SwiftUI
++
++/// Presentation only. The library owns installation, saves and launching.
++struct DeckLibraryGame: Identifiable, Equatable {
++    let id: String
++    var title: String
++    var subtitle: String
++    var lastPlayed: Date?
++}
++
++enum DeckLibraryPalette {
++    static let background = Color(red: 0.055, green: 0.083, blue: 0.115)
++    static let surface = Color(red: 0.17, green: 0.21, blue: 0.27)
++    static let accent = Color(red: 0.15, green: 0.72, blue: 0.96)
++    static let green = Color(red: 0.48, green: 0.79, blue: 0.20)
++}
++
++/// A Deck-style shelf: the selected game's wide artwork and neighbouring
++/// portrait covers. No display link, timer, video or animated background.
++struct DeckLibraryShelf<Artwork: View>: View {
++    let games: [DeckLibraryGame]
++    var title = "最近游玩"
++    let width: CGFloat
++    var viewportHeight: CGFloat = 900
++    @Binding var selection: String?
++    var open: (String) -> Void
++    var browse: () -> Void
++    @ViewBuilder var artwork: (DeckLibraryGame, Bool) -> Artwork
++    @Environment(\.accessibilityReduceMotion) private var reduceMotion
++
++    private var active: DeckLibraryGame? {
++        games.first { $0.id == selection } ?? games.first
++    }
++    private var compactLandscape: Bool { width >= 600 && viewportHeight < 500 }
++    private var coverHeight: CGFloat {
++        if compactLandscape { return min(170, max(128, viewportHeight - 180)) }
++        return width < 600 ? min(210, max(140, width * 0.84 * 9 / 16)) : 232
++    }
++    private var featuredWidth: CGFloat { min(width - 12, coverHeight * 16 / 9) }
++    private var transition: Animation? { reduceMotion ? nil : .easeInOut(duration: 0.2) }
++
++    var body: some View {
++        VStack(alignment: .leading, spacing: compactLandscape ? 12 : 18) {
++            HStack(alignment: .firstTextBaseline) {
++                Text(title).font(.title2.bold())
++                Text("\(games.count)").font(.subheadline.monospacedDigit()).foregroundStyle(.white.opacity(0.5))
++                Spacer()
++                Button(action: browse) {
++                    Label("游戏库", systemImage: "arrow.right").font(.subheadline.weight(.semibold))
++                }.buttonStyle(.plain).foregroundStyle(DeckLibraryPalette.accent).frame(minHeight: 44)
++            }
++
++            if let active {
++                ScrollViewReader { reader in
++                    ScrollView(.horizontal, showsIndicators: false) {
++                        LazyHStack(alignment: .center, spacing: 14) {
++                            ForEach(games) { game in
++                                card(game, selected: game.id == active.id)
++                                    .id(game.id)
++                            }
++                        }.padding(6)
++                    }
++                    .frame(height: coverHeight + 12)
++                    .onAppear { reader.scrollTo(active.id, anchor: .leading) }
++                    .onChange(of: width) { _, _ in
++                        // Keep the selected cover visible after a rotation or split-view resize.
++                        reader.scrollTo(active.id, anchor: .leading)
++                    }
++                    .onChange(of: selection) { _, id in
++                        guard let id else { return }
++                        withAnimation(transition) { reader.scrollTo(id, anchor: .leading) }
++                    }
++                    .onChange(of: games.map(\.id)) { _, ids in
++                        if let selection, !ids.contains(selection) { self.selection = ids.first }
++                        if let id = self.selection ?? ids.first { reader.scrollTo(id, anchor: .leading) }
++                    }
++                }
++
++                HStack(alignment: .center, spacing: 14) {
++                    Button { open(active.id) } label: {
++                        Image(systemName: "arrow.up.right")
++                            .font(.title3.weight(.bold))
++                            .foregroundStyle(.black.opacity(0.8))
++                            .frame(width: 48, height: 48)
++                            .background(DeckLibraryPalette.green, in: RoundedRectangle(cornerRadius: 8))
++                    }.buttonStyle(.plain).accessibilityLabel("打开 \(active.title) 的游戏详情")
++                    VStack(alignment: .leading, spacing: 5) {
++                        Text(active.title).font(.title3.bold()).lineLimit(2).fixedSize(horizontal: false, vertical: true)
++                        Text(active.subtitle).font(.caption.weight(.semibold))
++                            .foregroundStyle(DeckLibraryPalette.green).lineLimit(2)
++                    }
++                    Spacer(minLength: 0)
++                    if width >= 600 {
++                        HStack(spacing: 8) {
++                            stepButton(-1, symbol: "chevron.left")
++                            stepButton(1, symbol: "chevron.right")
++                        }
++                    }
++                }.padding(.horizontal, 6)
++                if !compactLandscape {
++                    Text("点选封面切换 · 再点打开游戏详情")
++                        .font(.caption).foregroundStyle(.white.opacity(0.45)).padding(.horizontal, 6)
++                }
++            } else {
++                VStack(alignment: .leading, spacing: 10) {
++                    Label("还没有可展示的游戏", systemImage: "gamecontroller")
++                        .font(.headline)
++                    Text("在下方游戏库安装游戏，或调整搜索和平台筛选。")
++                        .font(.subheadline).foregroundStyle(.white.opacity(0.65))
++                }.frame(maxWidth: .infinity, alignment: .leading).padding(24)
++                    .background(DeckLibraryPalette.surface, in: RoundedRectangle(cornerRadius: 12))
++            }
++        }
++        .foregroundStyle(.white)
++    }
++
++    private func card(_ game: DeckLibraryGame, selected: Bool) -> some View {
++        Button {
++            if selected { open(game.id) }
++            else { withAnimation(transition) { selection = game.id } }
++        } label: {
++            artwork(game, selected)
++                .frame(width: selected ? featuredWidth : coverHeight * 2 / 3, height: coverHeight)
++                .clipped()
++                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
++                .overlay {
++                    RoundedRectangle(cornerRadius: 10, style: .continuous)
++                        .strokeBorder(selected ? Color.white : Color.white.opacity(0.12), lineWidth: selected ? 3 : 1)
++                }
++                .shadow(color: .black.opacity(selected ? 0.35 : 0.18), radius: 4, y: 3)
++                .contentShape(RoundedRectangle(cornerRadius: 10))
++        }
++        .buttonStyle(.plain)
++        .accessibilityLabel(game.title)
++        .accessibilityValue(selected ? "已选中，\(game.subtitle)" : game.subtitle)
++        .accessibilityHint(selected ? "打开游戏详情" : "选中并展开封面")
++        .accessibilityAddTraits(selected ? [.isSelected] : [])
++    }
++
++    private func stepButton(_ direction: Int, symbol: String) -> some View {
++        Button {
++            guard !games.isEmpty else { return }
++            let current = games.firstIndex { $0.id == active?.id } ?? 0
++            let next = (current + direction + games.count) % games.count
++            withAnimation(transition) { selection = games[next].id }
++        } label: {
++            Image(systemName: symbol).font(.subheadline.bold()).frame(width: 44, height: 44)
++                .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
++        }.buttonStyle(.plain).accessibilityLabel(direction < 0 ? "上一个游戏" : "下一个游戏")
++    }
++}
+diff --git a/app/Madeira/LibraryDeckArtwork.swift b/app/Madeira/LibraryDeckArtwork.swift
+new file mode 100644
+index 0000000..2f21121
+--- /dev/null
++++ b/app/Madeira/LibraryDeckArtwork.swift
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-3.0-or-later
++// Madeira Converter Exception: see LICENSE-EXCEPTION.md
++
++import SwiftUI
++import UIKit
++
++/// Uses the existing bounded, downsampled disk/memory cache. Wide Steam art
++/// gets its own cache key so it can never replace a portrait cover.
++struct LibraryDeckArtwork: View {
++    let source: LibraryCoverCache.Source?
++    @Environment(\.displayScale) private var scale
++    @State private var image: UIImage?
++
++    var body: some View {
++        GeometryReader { size in
++            ZStack {
++                LinearGradient(colors: [DeckLibraryPalette.surface, DeckLibraryPalette.background],
++                               startPoint: .topLeading, endPoint: .bottomTrailing)
++                if let image {
++                    Image(uiImage: image).resizable().scaledToFill()
++                        .frame(width: size.size.width, height: size.size.height).clipped()
++                } else {
++                    Image(systemName: "gamecontroller.fill").font(.largeTitle).foregroundStyle(.white.opacity(0.3))
++                }
++            }
++            .task(id: source) {
++                image = nil
++                load(width: size.size.width)
++            }
++            .task(id: Int(size.size.width * scale)) { load(width: size.size.width) }
++            .onReceive(LibraryCoverCache.shared.updates) { key in
++                if key == source?.key || key == source?.variant { load(width: size.size.width) }
++            }
++        }.accessibilityHidden(true)
++    }
++
++    private func load(width: CGFloat) {
++        guard let source else { return }
++        if let cached = LibraryCoverCache.shared.image(for: source, pixelWidth: Int(width * scale)) {
++            image = cached.image
++        }
++    }
++
++    @MainActor static func source(entry: LibraryEntry?, steamID: Int?, wide: Bool) -> LibraryCoverCache.Source? {
++        if let entry, entry.coverFile != nil { return .entry(entry) }
++        guard let id = steamID ?? entry?.steamID ?? entry?.steamAppID else {
++            return entry.flatMap { .entry($0) }
++        }
++        guard wide else { return .steam(id) }
++        var urls: [URL] = []
++        if let header = SteamOwnedLibrary.shared.game(id)?.headerImage, SteamGamesRules.safeAssetName(header),
++           let url = URL(string: SteamGamesRules.assetBase + "\(id)/" + header) { urls.append(url) }
++        if let url = URL(string: "https://cdn.cloudflare.steamstatic.com/steam/apps/\(id)/header.jpg") { urls.append(url) }
++        urls.append(contentsOf: SteamGamesRules.artwork(appID: id) { SteamOwnedLibrary.shared.game($0) })
++        return .init(key: "deck-wide-\(id)", urls: urls)
++    }
++}
+diff --git a/tests/host/check-local-va-floor.py b/tests/host/check-local-va-floor.py
+new file mode 100644
+index 0000000..f302609
+--- /dev/null
++++ b/tests/host/check-local-va-floor.py
+@@ -0,0 +1,61 @@
++#!/usr/bin/env python3
++"""Compile the actual initialization function and preserve the deployed VA fix."""
++from pathlib import Path
++import subprocess
++import tempfile
++
++root = Path(__file__).resolve().parents[2]
++source = (root / 'build/ntdll-unix/virtual_ios.c').read_text()
++start = source.index('void virtual_set_large_address_space(void)')
++function = source[start:source.index('\n}\n', start) + 3]
++prefix = r'''
++#include <assert.h>
++#include <stdint.h>
++typedef int BOOL;
++#define IMAGE_FILE_LARGE_ADDRESS_AWARE 0x20
++#define IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA 0x20
++#define IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE 0x40
++static int is_win64, wow_value, note_count;
++static void *address_space_start, *user_space_limit, *working_set_limit;
++static void *address_space_limit = (void *)0x7fffffff0000ULL;
++static uintptr_t user_space_wow_limit, limit_4g = 0x100000000ULL, limit_2g = 0x80000000ULL;
++static struct { unsigned ImageCharacteristics, DllCharacteristics; } main_image_info;
++static uintptr_t ios_wow_base(void) { return wow_value ? 0x100000000ULL : 0; }
++static int is_wow64(void) { return wow_value; }
++static void free_reserved_memory(void *a, void *b) { (void)a; (void)b; }
++static uintptr_t ios_wow_ceiling_for_charact(unsigned c) { return c & 0x20 ? limit_4g - 1 : limit_2g - 1; }
++static void ios_wow_note_laa(unsigned c) { (void)c; note_count++; }
++static void ios_clamp_user_space_limit(const char *s) { (void)s; }
++'''
++main = r'''
++int main(void) {
++  uintptr_t starts[] = { 0x100010000ULL, 0x104e60000ULL, 0x110000ULL };
++  for (unsigned i = 0; i < 3; ++i)
++    for (int native = 0; native < 2; ++native)
++      for (int wow = 0; wow < 2; ++wow)
++        for (int laa = 0; laa < 2; ++laa) {
++          is_win64 = native; wow_value = wow; note_count = 0;
++          main_image_info.ImageCharacteristics = laa ? 0x20 : 0;
++          address_space_start = (void *)starts[i]; user_space_wow_limit = 123;
++          virtual_set_large_address_space();
++          uintptr_t expected = starts[i];
++#ifndef WINE_IOS
++          if (native && !wow) expected = 0x10000;
++#endif
++          assert((uintptr_t)address_space_start == expected);
++          assert(user_space_wow_limit == (native && wow ? (laa ? limit_4g : limit_2g) - 1 : 123));
++#ifdef WINE_IOS
++          assert(note_count == (native && wow ? 1 : 0));
++#endif
++        }
++}
++'''
++with tempfile.TemporaryDirectory() as folder:
++    path = Path(folder) / 'va.c'
++    path.write_text(prefix + function + main)
++    for flags in ([], ['-DWINE_IOS=1']):
++        exe = Path(folder) / ('ios' if flags else 'other')
++        subprocess.run(['cc', '-std=c11', '-O1', '-Wall', '-Werror', '-Wno-unused-function',
++                        '-Wno-unused-variable', *flags, str(path), '-o', str(exe)], check=True)
++        subprocess.run([str(exe)], check=True)
++print('PASS: native iOS keeps its initialized floor; WoW and other-platform behavior preserved (48 cases)')
