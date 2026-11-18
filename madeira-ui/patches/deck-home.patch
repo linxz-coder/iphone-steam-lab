@@ -1,5 +1,5 @@
 diff --git a/app/Madeira.xcodeproj/project.pbxproj b/app/Madeira.xcodeproj/project.pbxproj
-index 5d6c310..69917a3 100644
+index 5d6c310..70c1d52 100644
 --- a/app/Madeira.xcodeproj/project.pbxproj
 +++ b/app/Madeira.xcodeproj/project.pbxproj
 @@ -7,6 +7,8 @@
@@ -43,7 +43,7 @@ index 5d6c310..69917a3 100644
  				CODE_SIGN_IDENTITY = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 7;
++				CURRENT_PROJECT_VERSION = 8;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				GENERATE_INFOPLIST_FILE = NO;
  				HEADER_SEARCH_PATHS = (
@@ -52,7 +52,7 @@ index 5d6c310..69917a3 100644
  				CODE_SIGN_ENTITLEMENTS = Madeira/Madeira.entitlements;
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 7;
++				CURRENT_PROJECT_VERSION = 8;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				GENERATE_INFOPLIST_FILE = NO;
  				HEADER_SEARCH_PATHS = (
@@ -61,7 +61,7 @@ index 5d6c310..69917a3 100644
  				CODE_SIGN_IDENTITY = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 7;
++				CURRENT_PROJECT_VERSION = 8;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
  				GENERATE_INFOPLIST_FILE = NO;
@@ -70,12 +70,12 @@ index 5d6c310..69917a3 100644
  				APPLICATION_EXTENSION_API_ONLY = YES;
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 7;
++				CURRENT_PROJECT_VERSION = 8;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
  				GENERATE_INFOPLIST_FILE = NO;
 diff --git a/app/Madeira/Info.plist b/app/Madeira/Info.plist
-index 15c078a..fec34a8 100644
+index 15c078a..0799f83 100644
 --- a/app/Madeira/Info.plist
 +++ b/app/Madeira/Info.plist
 @@ -57,6 +57,8 @@
@@ -83,7 +83,7 @@ index 15c078a..fec34a8 100644
  	<key>CFBundleVersion</key>
  	<string>$(CURRENT_PROJECT_VERSION)</string>
 +	<key>MadeiraBuild</key>
-+	<string>0.2.0-deck-ui-va-floor-20261117-r2</string>
++	<string>0.2.0-deck-ui-ios-pipe-20261118</string>
  	<key>GCSupportsGameMode</key>
  	<true/>
  	<key>LSSupportsGameMode</key>
@@ -271,6 +271,21 @@ index 35cb4f1..76ff2aa 100644
      /// The Desktop button at the top of the page (both grids).
      private var desktopButton: some View {
          HStack {
+diff --git a/build/ntdll-unix/server_ios.c b/build/ntdll-unix/server_ios.c
+index dc30fc6..2caeb60 100644
+--- a/build/ntdll-unix/server_ios.c
++++ b/build/ntdll-unix/server_ios.c
+@@ -5260,7 +5260,9 @@ NTSTATUS unixcall_wine_server_handle_to_fd( void *args )
+ int server_pipe( int fd[2] )
+ {
+     int ret;
+-#ifdef HAVE_PIPE2
++    /* HAVE_PIPE2 comes from the build Mac. The iOS deployment target only
++     * guarantees pipe and fcntl. Do not call a missing weak import here. */
++#if defined(HAVE_PIPE2) && !defined(WINE_IOS)
+     static BOOL have_pipe2 = TRUE;
+ 
+     if (have_pipe2)
 diff --git a/build/ntdll-unix/virtual_ios.c b/build/ntdll-unix/virtual_ios.c
 index 06cd0d1..f91fc68 100644
 --- a/build/ntdll-unix/virtual_ios.c
@@ -580,3 +595,39 @@ index 0000000..f302609
 +                        '-Wno-unused-variable', *flags, str(path), '-o', str(exe)], check=True)
 +        subprocess.run([str(exe)], check=True)
 +print('PASS: native iOS keeps its initialized floor; WoW and other-platform behavior preserved (48 cases)')
+diff --git a/tests/host/check-ios-pipe-import.py b/tests/host/check-ios-pipe-import.py
+new file mode 100644
+index 0000000..a37ec9e
+--- /dev/null
++++ b/tests/host/check-ios-pipe-import.py
+@@ -0,0 +1,30 @@
++"""Check both Xcode executable layouts for a pipe2 import before shipping."""
++from pathlib import Path
++import plistlib
++import re
++import subprocess
++import sys
++from tempfile import TemporaryDirectory
++from zipfile import ZipFile
++
++
++def check_imports(ipa):
++    root = "Payload/Madeira.app/"
++    with ZipFile(ipa) as package, TemporaryDirectory() as directory:
++        info = plistlib.loads(package.read(root + "Info.plist"))
++        executable = info["CFBundleExecutable"]
++        targets = [executable]
++        debug_library = executable + ".debug.dylib"
++        if root + debug_library in package.namelist():
++            targets.append(debug_library)
++        for name in targets:
++            binary = Path(directory) / name
++            binary.write_bytes(package.read(root + name))
++            imports = subprocess.check_output(["xcrun", "nm", "-u", str(binary)], text=True)
++            if re.search(r"\b_pipe2$", imports, re.MULTILINE):
++                raise SystemExit(f"{name} imports pipe2, which is absent on older iOS")
++            print(f"{name}: no pipe2 import")
++
++
++if __name__ == "__main__":
++    check_imports(sys.argv[1])

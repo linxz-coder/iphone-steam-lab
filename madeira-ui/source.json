@@ -2,7 +2,7 @@
   "repository": "willfaust/Madeira",
   "commit": "5fda6a0e9543e5de1df010aff35748ab913fd0d9",
   "tag": "v0.2.0",
-  "build": "0.2.0-deck-ui-va-floor-20261117-r2",
+  "build": "0.2.0-deck-ui-ios-pipe-20261118",
   "bundle_id": "com.willfaust.madeora",
-  "build_number": "7"
+  "build_number": "8"
 }

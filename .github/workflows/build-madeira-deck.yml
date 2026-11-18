@@ -99,6 +99,8 @@ jobs:
           test -s dist/Madeira.ipa
           unzip -tq dist/Madeira.ipa
           python3 tools/build/runtime-components.py ipa dist/Madeira.ipa
+      - name: Check iOS pipe compatibility in linked app
+        run: python3 tests/host/check-ios-pipe-import.py dist/Madeira.ipa
       - uses: actions/upload-artifact@v4
         with:
           name: Madeira-deck-ui-ipa
@@ -492,6 +494,8 @@ jobs:
           merge-multiple: true
       - name: Build IPA
         run: tools/build-ipa.sh
+      - name: Check iOS pipe compatibility in linked app
+        run: python3 tests/host/check-ios-pipe-import.py dist/Madeira.ipa
       - uses: actions/cache/save@v4
         with:
           key: ${{ needs.plan.outputs.ipa }}
