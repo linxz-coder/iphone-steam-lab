@@ -12,7 +12,15 @@ GitHub Actions 在 `codex/deck-ui-build` 分支构建，使用上游同款 `xcod
 
 补丁修改的 Madeira 源码沿用 GPL-3.0-or-later 和 Madeira Converter Exception，详见本目录许可证。仓库其他独立脚本的许可不变。
 
-## 这次手机上的结果
+## 2026-11-18 的 Hades 启动修正
+
+build 7 在 iOS 26.5.1 上启动 Wine 时会调用系统缺少的 `pipe2`。build 8 改用兼容的管道接口后，Steam 已能启动 Hades.exe，但 32 位和 64 位 DirectX 版都会在创建窗口前退出。对照之前能玩的版本，构建脚本漏了上游的 `patches/wine-opengl-winios.patch`。
+
+build 9 在编译 Wine 前应用这份补丁，同时重建手机端和 Windows 端组件。安装包检查覆盖了 `pipe2`、32 位和 ARM64EC OpenGL 的加载地址、运行库清单。完整包 SHA-256 为 `2216358baed5b1ab5721cf1026874566329e2be4a1d45b5eac9cd00a3e292966`。[build 9 构建记录](https://github.com/linxz-coder/iphone-steam-lab/actions/runs/44217309763)
+
+截至这次构建，build 9 已通过安装包检查，实机游玩结果待验证。下方是 build 7 的历史记录。
+
+## 2026-11-17 的 build 7 实机记录
 
 2026-11-17，0.2.0 / build 7 已用原应用身份安装到 iPhone 17 Pro / iOS 26.5.1。[完整构建记录](https://github.com/linxz-coder/iphone-steam-lab/actions/runs/44019905283)。
 
