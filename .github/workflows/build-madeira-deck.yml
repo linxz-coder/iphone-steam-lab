@@ -99,8 +99,8 @@ jobs:
           test -s dist/Madeira.ipa
           unzip -tq dist/Madeira.ipa
           python3 tools/build/runtime-components.py ipa dist/Madeira.ipa
-      - name: Check iOS pipe compatibility in linked app
-        run: python3 tests/host/check-ios-pipe-import.py dist/Madeira.ipa
+      - name: Check iOS Wine compatibility in packaged app
+        run: python3 tests/host/check-ios-runtime-compat.py dist/Madeira.ipa
       - uses: actions/upload-artifact@v4
         with:
           name: Madeira-deck-ui-ipa
@@ -466,7 +466,7 @@ jobs:
             app/Madeira/legal/LICENSES-rppairing-crates.txt
       - uses: actions/cache@v4
         with:
-          key: plan19-${{ steps.sdk.outputs.key }}-wine-host-${{ steps.pins.outputs.wine }}-${{ hashFiles('tools/build/build-wine.sh', 'tools/build/setup-llvm-mingw.sh') }}
+          key: plan19-${{ steps.sdk.outputs.key }}-wine-host-${{ steps.pins.outputs.wine }}-${{ hashFiles('tools/build/build-wine.sh', 'patches/wine-opengl-winios.patch', 'tools/build/setup-llvm-mingw.sh') }}
           path: |
             wine/build-macos
             wine/build-arm64ec
@@ -494,8 +494,8 @@ jobs:
           merge-multiple: true
       - name: Build IPA
         run: tools/build-ipa.sh
-      - name: Check iOS pipe compatibility in linked app
-        run: python3 tests/host/check-ios-pipe-import.py dist/Madeira.ipa
+      - name: Check iOS Wine compatibility in packaged app
+        run: python3 tests/host/check-ios-runtime-compat.py dist/Madeira.ipa
       - uses: actions/cache/save@v4
         with:
           key: ${{ needs.plan.outputs.ipa }}

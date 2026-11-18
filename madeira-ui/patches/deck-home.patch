@@ -1,5 +1,5 @@
 diff --git a/app/Madeira.xcodeproj/project.pbxproj b/app/Madeira.xcodeproj/project.pbxproj
-index 5d6c310..70c1d52 100644
+index 5d6c310..3ccdc6e 100644
 --- a/app/Madeira.xcodeproj/project.pbxproj
 +++ b/app/Madeira.xcodeproj/project.pbxproj
 @@ -7,6 +7,8 @@
@@ -43,7 +43,7 @@ index 5d6c310..70c1d52 100644
  				CODE_SIGN_IDENTITY = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 8;
++				CURRENT_PROJECT_VERSION = 9;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				GENERATE_INFOPLIST_FILE = NO;
  				HEADER_SEARCH_PATHS = (
@@ -52,7 +52,7 @@ index 5d6c310..70c1d52 100644
  				CODE_SIGN_ENTITLEMENTS = Madeira/Madeira.entitlements;
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 8;
++				CURRENT_PROJECT_VERSION = 9;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				GENERATE_INFOPLIST_FILE = NO;
  				HEADER_SEARCH_PATHS = (
@@ -61,7 +61,7 @@ index 5d6c310..70c1d52 100644
  				CODE_SIGN_IDENTITY = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 8;
++				CURRENT_PROJECT_VERSION = 9;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
  				GENERATE_INFOPLIST_FILE = NO;
@@ -70,12 +70,12 @@ index 5d6c310..70c1d52 100644
  				APPLICATION_EXTENSION_API_ONLY = YES;
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 8;
++				CURRENT_PROJECT_VERSION = 9;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
  				GENERATE_INFOPLIST_FILE = NO;
 diff --git a/app/Madeira/Info.plist b/app/Madeira/Info.plist
-index 15c078a..0799f83 100644
+index 15c078a..cbf939f 100644
 --- a/app/Madeira/Info.plist
 +++ b/app/Madeira/Info.plist
 @@ -57,6 +57,8 @@
@@ -83,7 +83,7 @@ index 15c078a..0799f83 100644
  	<key>CFBundleVersion</key>
  	<string>$(CURRENT_PROJECT_VERSION)</string>
 +	<key>MadeiraBuild</key>
-+	<string>0.2.0-deck-ui-ios-pipe-20261118</string>
++	<string>0.2.0-deck-ui-wine-compat-20261118</string>
  	<key>GCSupportsGameMode</key>
  	<true/>
  	<key>LSSupportsGameMode</key>
@@ -305,6 +305,38 @@ index 06cd0d1..f91fc68 100644
  #ifndef __APPLE__  /* don't free the zerofill section on macOS */
              if ((main_image_info.DllCharacteristics & IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA) &&
                  (main_image_info.DllCharacteristics & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE))
+diff --git a/tools/build/build-wine.sh b/tools/build/build-wine.sh
+index 514067c..d98abbf 100755
+--- a/tools/build/build-wine.sh
++++ b/tools/build/build-wine.sh
+@@ -8,6 +8,15 @@ export PATH="$MINGW:$PATH"
+ 
+ [[ -x "$WINE/configure" ]] || { echo "ERROR: wine submodule is missing" >&2; exit 1; }
+ 
++# The native OpenGL thunks and the Windows DLL must come from the same
++# iOS-patched Wine tree (docs/BUILDING.md, OpenGL). This also applies when
++# rebuilding in an existing checkout that already has the patch.
++opengl_patch="$ROOT/patches/wine-opengl-winios.patch"
++if ! git -C "$WINE" apply --reverse --check "$opengl_patch" 2>/dev/null; then
++  git -C "$WINE" apply --check "$opengl_patch"
++  git -C "$WINE" apply "$opengl_patch"
++fi
++
+ # Native macOS build tree. Madeira's iOS unix-side libraries consume config.h,
+ # generated headers, and host build outputs from here. aarch64 is the native
+ # PE architecture used by the tracked Wine/DXMT side.
+diff --git a/tools/build/runtime-components.json b/tools/build/runtime-components.json
+index 81df841..506cc63 100644
+--- a/tools/build/runtime-components.json
++++ b/tools/build/runtime-components.json
+@@ -38,6 +38,7 @@
+       "madeira-d3d12/src/**",
+       "madeira-d3d12/tests/windows/**",
+       "tools/build/build-wine.sh",
++      "patches/wine-opengl-winios.patch",
+       "tools/build/setup-llvm-mingw.sh",
+       "tools/build/build-shader-headers.sh",
+       "tools/build/build-llvm-ios.sh",
 diff --git a/app/Madeira/DeckLibraryShelf.swift b/app/Madeira/DeckLibraryShelf.swift
 new file mode 100644
 index 0000000..6e5fc24
@@ -595,16 +627,17 @@ index 0000000..f302609
 +                        '-Wno-unused-variable', *flags, str(path), '-o', str(exe)], check=True)
 +        subprocess.run([str(exe)], check=True)
 +print('PASS: native iOS keeps its initialized floor; WoW and other-platform behavior preserved (48 cases)')
-diff --git a/tests/host/check-ios-pipe-import.py b/tests/host/check-ios-pipe-import.py
+diff --git a/tests/host/check-ios-runtime-compat.py b/tests/host/check-ios-runtime-compat.py
 new file mode 100644
-index 0000000..a37ec9e
+index 0000000..232e449
 --- /dev/null
-+++ b/tests/host/check-ios-pipe-import.py
-@@ -0,0 +1,30 @@
-+"""Check both Xcode executable layouts for a pipe2 import before shipping."""
++++ b/tests/host/check-ios-runtime-compat.py
+@@ -0,0 +1,48 @@
++"""Check the linked iOS app and the bundled Wine OpenGL client."""
 +from pathlib import Path
 +import plistlib
 +import re
++import struct
 +import subprocess
 +import sys
 +from tempfile import TemporaryDirectory
@@ -614,6 +647,23 @@ index 0000000..a37ec9e
 +def check_imports(ipa):
 +    root = "Payload/Madeira.app/"
 +    with ZipFile(ipa) as package, TemporaryDirectory() as directory:
++        # The upstream Wine iOS patch keeps x86 at its fixed base but lets
++        # ARM64EC load above 4 GB. A build missing the patch uses the same
++        # low base for both and can crash before a game creates its window.
++        for architecture, high in [("arm64ec-windows", True), ("i386-windows", False)]:
++            dll = package.read(root + architecture + "/opengl32.dll")
++            pe = struct.unpack_from("<I", dll, 0x3C)[0]
++            assert dll[pe:pe+4] == b"PE\0\0"
++            optional = pe + 24
++            magic = struct.unpack_from("<H", dll, optional)[0]
++            if high:
++                assert magic == 0x20B
++                base = struct.unpack_from("<Q", dll, optional + 24)[0]
++                assert base >= 2**32, f"{architecture}/opengl32.dll has low image base {base:#x}"
++            else:
++                assert magic == 0x10B
++                base = struct.unpack_from("<I", dll, optional + 28)[0]
++                assert base == 0x7A800000, f"{architecture}/opengl32.dll has unexpected image base {base:#x}"
 +        info = plistlib.loads(package.read(root + "Info.plist"))
 +        executable = info["CFBundleExecutable"]
 +        targets = [executable]
