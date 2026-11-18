@@ -1,5 +1,5 @@
 diff --git a/app/Madeira.xcodeproj/project.pbxproj b/app/Madeira.xcodeproj/project.pbxproj
-index 5d6c310..3ccdc6e 100644
+index 5d6c310..19d924c 100644
 --- a/app/Madeira.xcodeproj/project.pbxproj
 +++ b/app/Madeira.xcodeproj/project.pbxproj
 @@ -7,6 +7,8 @@
@@ -43,7 +43,7 @@ index 5d6c310..3ccdc6e 100644
  				CODE_SIGN_IDENTITY = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 9;
++				CURRENT_PROJECT_VERSION = 11;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				GENERATE_INFOPLIST_FILE = NO;
  				HEADER_SEARCH_PATHS = (
@@ -52,7 +52,7 @@ index 5d6c310..3ccdc6e 100644
  				CODE_SIGN_ENTITLEMENTS = Madeira/Madeira.entitlements;
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 9;
++				CURRENT_PROJECT_VERSION = 11;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				GENERATE_INFOPLIST_FILE = NO;
  				HEADER_SEARCH_PATHS = (
@@ -61,7 +61,7 @@ index 5d6c310..3ccdc6e 100644
  				CODE_SIGN_IDENTITY = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 9;
++				CURRENT_PROJECT_VERSION = 11;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
  				GENERATE_INFOPLIST_FILE = NO;
@@ -70,12 +70,12 @@ index 5d6c310..3ccdc6e 100644
  				APPLICATION_EXTENSION_API_ONLY = YES;
  				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 9;
++				CURRENT_PROJECT_VERSION = 11;
  				DEVELOPMENT_TEAM = V8NU3FX3TL;
  				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/Frameworks/StikJIT.xcframework/ios-arm64";
  				GENERATE_INFOPLIST_FILE = NO;
 diff --git a/app/Madeira/Info.plist b/app/Madeira/Info.plist
-index 15c078a..cbf939f 100644
+index 15c078a..e6ede9a 100644
 --- a/app/Madeira/Info.plist
 +++ b/app/Madeira/Info.plist
 @@ -57,6 +57,8 @@
@@ -83,7 +83,7 @@ index 15c078a..cbf939f 100644
  	<key>CFBundleVersion</key>
  	<string>$(CURRENT_PROJECT_VERSION)</string>
 +	<key>MadeiraBuild</key>
-+	<string>0.2.0-deck-ui-wine-compat-20261118</string>
++	<string>0.2.0-deck-ui-wine-delayload-20261118</string>
  	<key>GCSupportsGameMode</key>
  	<true/>
  	<key>LSSupportsGameMode</key>
@@ -305,6 +305,32 @@ index 06cd0d1..f91fc68 100644
  #ifndef __APPLE__  /* don't free the zerofill section on macOS */
              if ((main_image_info.DllCharacteristics & IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA) &&
                  (main_image_info.DllCharacteristics & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE))
+diff --git a/build/windows-runtime/build.sh b/build/windows-runtime/build.sh
+index 1307e2e..2ebe004 100755
+--- a/build/windows-runtime/build.sh
++++ b/build/windows-runtime/build.sh
+@@ -70,4 +70,21 @@ fi
+ [ "$(git -C "$LUA" rev-parse HEAD)" = a4c064539ea931274d407e1249b4bb575424a0f4 ] || exit 1
+ LUAJIT_SRC="$LUA" bash "$R/build/luajit-x64/build.sh"
+ 
++# These ARM64EC system modules are rebuilt with eager imports by build-modules.sh.
++# Keep the pinned release's delayed imports: on iOS 26.5.1, eagerly loading
++# the shell/COM stack can initialize common controls before win32u is ready.
++# Keep the rebuilt OpenGL client paired with the patched native runtime.
++release_commit=5fda6a0e9543e5de1df010aff35748ab913fd0d9
++release_dlls=(
++    WLDAP32 advapi32 combase comctl32 crypt32 cryptnet cryptowinrt cryptui
++    d3dx9_43 gdiplus hlink hnetcfg imm32 mfplat mfreadwrite mlang mmdevapi
++    ole32 oleaut32 rpcrt4 sechost secur32 setupapi shcore shell32 shlwapi
++    user32 uxtheme winhttp wininet winmm wintrust
++)
++for dll in "${release_dlls[@]}"; do
++    module="app/Madeira/arm64ec-windows/$dll.dll"
++    git -C "$R" show "$release_commit:$module" > "$R/$module.tmp"
++    mv "$R/$module.tmp" "$R/$module"
++done
++
+ python3 "$R/build/windows-runtime/targets.py" closure
 diff --git a/tools/build/build-wine.sh b/tools/build/build-wine.sh
 index 514067c..d98abbf 100755
 --- a/tools/build/build-wine.sh
@@ -629,14 +655,15 @@ index 0000000..f302609
 +print('PASS: native iOS keeps its initialized floor; WoW and other-platform behavior preserved (48 cases)')
 diff --git a/tests/host/check-ios-runtime-compat.py b/tests/host/check-ios-runtime-compat.py
 new file mode 100644
-index 0000000..232e449
+index 0000000..0eb1e09
 --- /dev/null
 +++ b/tests/host/check-ios-runtime-compat.py
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,57 @@
 +"""Check the linked iOS app and the bundled Wine OpenGL client."""
 +from pathlib import Path
 +import plistlib
 +import re
++import runpy
 +import struct
 +import subprocess
 +import sys
@@ -664,6 +691,14 @@ index 0000000..232e449
 +                assert magic == 0x10B
 +                base = struct.unpack_from("<I", dll, optional + 28)[0]
 +                assert base == 0x7A800000, f"{architecture}/opengl32.dll has unexpected image base {base:#x}"
++        # Loading shell controls during user32 initialization crashed both
++        # ParanormalHK and The Walking Dead before the first game window.
++        pe_reader = runpy.run_path(str(Path(__file__).resolve().parents[2] / "tools/check-wine-media-dlls.py"))["PE"]
++        for name, dependency in [("user32", "combase.dll"), ("shell32", "comctl32.dll"), ("comctl32", "winmm.dll")]:
++            data = package.read(root + f"arm64ec-windows/{name}.dll")
++            image = pe_reader(data, machines=(0x8664, 0xa641, 0xa64e, 0xaa64))
++            if dependency not in image.imports(delayed=True) or dependency in image.imports():
++                raise SystemExit(f"{name}.dll must delay loading {dependency}")
 +        info = plistlib.loads(package.read(root + "Info.plist"))
 +        executable = info["CFBundleExecutable"]
 +        targets = [executable]

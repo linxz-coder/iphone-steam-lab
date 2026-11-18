@@ -2,7 +2,7 @@
   "repository": "willfaust/Madeira",
   "commit": "5fda6a0e9543e5de1df010aff35748ab913fd0d9",
   "tag": "v0.2.0",
-  "build": "0.2.0-deck-ui-wine-compat-20261118",
+  "build": "0.2.0-deck-ui-wine-delayload-20261118",
   "bundle_id": "com.willfaust.madeora",
-  "build_number": "9"
+  "build_number": "11"
 }
